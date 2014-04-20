@@ -1,0 +1,32 @@
+﻿<Window x:Class="JeuDuPresident.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="MainWindow" Height="600" Width="850">
+    <DockPanel LastChildFill="True">
+        <Grid Background="Yellow">
+            <WrapPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Top" Height="110" Width="842" Background="Green" >
+                <Image Source="assets\img\cards\1.png"></Image>
+                <Image Source="assets\img\cards\1.png"></Image>
+                <Image Source="assets\img\cards\1.png"></Image>
+                <Image Source="assets\img\cards\1.png"></Image>
+                <Image Source="assets\img\cards\1.png"></Image>
+                <Image Source="assets\img\cards\1.png"></Image>
+                <Image Source="assets\img\cards\1.png"></Image>
+                <Image Source="assets\img\cards\1.png"></Image>
+                <Image Source="assets\img\cards\1.png"></Image>
+                <Image Source="assets\img\cards\1.png"></Image>
+                <Image Source="assets\img\cards\1.png"></Image>
+                <Image Source="assets\img\cards\1.png"></Image>
+                <Image Source="assets\img\cards\1.png"></Image>
+            </WrapPanel>
+
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Bottom" Height="110" Width="842" Background="Blue"/>
+
+            <StackPanel Orientation="Vertical" HorizontalAlignment="Left" VerticalAlignment="Center" Height="349" Width="130" Background="Red" Margin="0,110">
+            </StackPanel>
+
+            <StackPanel Orientation="Vertical" HorizontalAlignment="Right" VerticalAlignment="Center" Height="349" Width="130" Background="Black" Margin="0,110">
+            </StackPanel>
+        </Grid>
+    </DockPanel>
+</Window>
