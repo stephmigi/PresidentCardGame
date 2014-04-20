@@ -19,5 +19,13 @@ namespace President.ObjectModel
             this.Name = name == String.Empty ? "Joueur" : name;
             this.Order = order;
         }
+
+        public List<Card> ShowPlayableCards(List<Card> lastCardsPlayed)
+        {
+            var nbCards = lastCardsPlayed.Count();
+            CardNumber cardPlayed = lastCardsPlayed.First().CardNumber;
+
+            return PlayerCards.GroupBy(p => p.CardNumber).Where(group => group.Count() >= nbCards && group.Key >= cardPlayed).SelectMany(group => group).ToList();
+        }
     }
 }

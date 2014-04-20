@@ -35,12 +35,18 @@ namespace President.ObjectModel
             Players.ForEach(p => p.PlayerCards = Deck.TakeCards(cardsPerPlayer));
         }
 
+        /// <summary>
+        /// Select the first player of the game to play
+        /// </summary>
         public void SelectFirstPlayer()
         {
             var first = new Random().Next(0, Players.Count - 1) ;
             Players[first].IsItMyTurn = true;
         }
 
+        /// <summary>
+        /// Select the next player to play
+        /// </summary>
         public void SelectNextPlayer()
         {
             var currentPlayerOrder = CurrentPlayer.Order;
