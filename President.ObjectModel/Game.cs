@@ -12,6 +12,14 @@ namespace President.ObjectModel
 
         public Deck Deck { get; set; }
 
+        public Player CurrentPlayer
+        {
+            get
+            {
+                return Players.Where(p => p.IsItMyTurn == true).FirstOrDefault();
+            }
+        }
+
         public Game(List<Player> players)
         {
             Players = players;
@@ -23,8 +31,25 @@ namespace President.ObjectModel
         /// </summary>
         public void DealCards()
         {
-            int cardsPerPlayer = 52 / Players.Count;
+            int cardsPerPlayer = Deck.NUMBER_OF_CARDS / Players.Count;
             Players.ForEach(p => p.PlayerCards = Deck.TakeCards(cardsPerPlayer));
+        }
+
+        public void SelectFirstPlayer()
+        {
+            var first = new Random().Next(0, Players.Count - 1) ;
+            Players[first].IsItMyTurn = true;
+        }
+
+        public void SelectNextPlayer()
+        {
+            var currentPlayerOrder = CurrentPlayer.Order;
+
+            var nextOrder = currentPlayerOrder == Order.Right ? Order.Top: ++currentPlayerOrder;
+            var nextPlayer = Players.Where(p => p.Order == nextOrder).FirstOrDefault();
+
+            Players.ForEach(p => p.IsItMyTurn = false);
+            nextPlayer.IsItMyTurn = true;
         }
     }
 }

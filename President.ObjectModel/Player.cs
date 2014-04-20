@@ -12,9 +12,12 @@ namespace President.ObjectModel
         public List<Card> PlayerCards { get; set; }
         public Order Order { get; set; }
 
-        public Player(string name)
+        public bool IsItMyTurn {get;set;}
+
+        public Player(string name, Order order)
         {
             this.Name = name == String.Empty ? "Joueur" : name;
+            this.Order = order;
         }
     }
 }

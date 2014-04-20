@@ -10,6 +10,8 @@ namespace President.ObjectModel
     {
         public List<Card> Cards { get; set; }
 
+        public const int NUMBER_OF_CARDS = 52;
+
         public Deck()
         {
             this.Reset();

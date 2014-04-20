@@ -14,10 +14,11 @@ namespace President.Tests
         [Test]
         public void TestingTheDeck()
         {
-            var Player1 = new Player("Joueur 1");
-            var Player2 = new Player("Joueur 2");
-            var Player3 = new Player("Joueur 3");
-            var Player4 = new Player("Joueur 4");
+            // new players
+            var Player1 = new Player("Joueur 1", Order.Top);
+            var Player2 = new Player("Joueur 2", Order.Left);
+            var Player3 = new Player("Joueur 3", Order.Bottom);
+            var Player4 = new Player("Joueur 4", Order.Right);
 
             var playerList = new List<Player>();
             playerList.Add(Player1);
@@ -25,21 +26,33 @@ namespace President.Tests
             playerList.Add(Player3);
             playerList.Add(Player4);
 
+            // Start new game with players
             var game = new Game(playerList);
 
+            // Deal the players some cards
             game.DealCards();
 
-            Console.WriteLine("Player 1 :");
-            game.Players[0].PlayerCards.ForEach(c => Console.WriteLine(c.CardNumber + " " + c.CardType));
-
-            Console.WriteLine("Player 2 :");
-            game.Players[1].PlayerCards.ForEach(c => Console.WriteLine(c.CardNumber + " " + c.CardType));
-
-            Console.WriteLine("Player 3 :");
-            game.Players[2].PlayerCards.ForEach(c => Console.WriteLine(c.CardNumber + " " + c.CardType));
-
-            Console.WriteLine("Player 4 :");
-            game.Players[3].PlayerCards.ForEach(c => Console.WriteLine(c.CardNumber + " " + c.CardType));
+            game.SelectFirstPlayer();
+            Console.WriteLine("First Player : " + game.CurrentPlayer.Name + " at position " + 
+                game.CurrentPlayer.Order.ToString());
+            game.SelectNextPlayer();
+            Console.WriteLine("Next Player : " + game.CurrentPlayer.Name + " at position " +
+                game.CurrentPlayer.Order.ToString());
+            game.SelectNextPlayer();
+            Console.WriteLine("Next Player : " + game.CurrentPlayer.Name + " at position " +
+                game.CurrentPlayer.Order.ToString());
+            game.SelectNextPlayer();
+            Console.WriteLine("Next Player : " + game.CurrentPlayer.Name + " at position " +
+                game.CurrentPlayer.Order.ToString());
+            game.SelectNextPlayer();
+            Console.WriteLine("Next Player : " + game.CurrentPlayer.Name + " at position " +
+                game.CurrentPlayer.Order.ToString());
+            game.SelectNextPlayer();
+            Console.WriteLine("Next Player : " + game.CurrentPlayer.Name + " at position " +
+                game.CurrentPlayer.Order.ToString());
+            game.SelectNextPlayer();
+            Console.WriteLine("Next Player : " + game.CurrentPlayer.Name + " at position " +
+                game.CurrentPlayer.Order.ToString());
         }
     }
 }
