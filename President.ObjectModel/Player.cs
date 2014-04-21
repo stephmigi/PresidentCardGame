@@ -35,15 +35,7 @@ namespace President.ObjectModel
             if (cardPlayed == CardNumber.Two)
                 return null;
 
-            var groupedPlayerCards = PlayerCards.GroupBy(p => p.CardNumber).SelectMany(group => group);
-
-            var finalList = new List<CardGroup>();
-            foreach (var group in groupedPlayerCards)
-            {
-                finalList.Add(group);
-            }
-
-            return finalList;
+            return PlayerCards.Where(c => c.NumberOfCards >= nbCards && c.CardNumber >= cardPlayed).ToList();
         }
 
         /// <summary>
