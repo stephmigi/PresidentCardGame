@@ -10,7 +10,12 @@ namespace President.ObjectModel
     {
         public List<Player> Players { get; set; }
 
+        /// <summary>
+        /// The initial deck
+        /// </summary>
         public Deck Deck { get; set; }
+
+        public List<CardGroup> Stack { get; set; }
 
         public Player CurrentPlayer
         {
@@ -24,6 +29,7 @@ namespace President.ObjectModel
         {
             Players = players;
             Deck = new Deck();
+            Stack = new List<CardGroup>();
         }
 
         /// <summary>
@@ -32,7 +38,17 @@ namespace President.ObjectModel
         public void DealCards()
         {
             int cardsPerPlayer = Deck.NUMBER_OF_CARDS / Players.Count;
-            Players.ForEach(p => p.PlayerCards = Deck.TakeCards(cardsPerPlayer));
+            foreach (var player in Players)
+            {
+                var cards = Deck.TakeCards(cardsPerPlayer);
+                var groupedPlayerCards = cards.GroupBy(p => p.CardNumber);
+                foreach (var group in groupedPlayerCards)
+                {
+                    var newGroup = new CardGroup(group.Key, group.ToList());
+                    player.PlayerCards.Add(newGroup);
+                }
+            }
+            
         }
 
         /// <summary>

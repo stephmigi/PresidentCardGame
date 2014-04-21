@@ -51,14 +51,18 @@ namespace President.Tests
             var cardsOnTable = new List<Card>();
             cardsOnTable.Add(new Card(CardNumber.Three, CardType.Club));
             cardsOnTable.Add(new Card(CardNumber.Three, CardType.Heart));
+            var cardGroup = new CardGroup(CardNumber.Three, cardsOnTable);
+
+            game.Stack.Add(cardGroup);
 
             Console.WriteLine("My Cards : ");
-            game.CurrentPlayer.PlayerCards.ForEach(p => Console.WriteLine(p.CardNumber + " of suit " + p.CardType));
-            var playable = game.CurrentPlayer.ShowPlayableCards(cardsOnTable);
+            game.CurrentPlayer.PlayerCards.ForEach(p => p.Cards.ForEach(c => Console.WriteLine(c.CardNumber + " of suit " + c.CardType)));
+            
+            var playable = game.CurrentPlayer.ShowPlayableCards(game.Stack.Last());
             if (playable.Any())
             {
                 Console.WriteLine("I can play : ");
-                playable.ForEach(p => Console.WriteLine(p.CardNumber + " of suit " + p.CardType));
+                playable.ForEach(p => p.Cards.ForEach(c => Console.WriteLine(c.CardNumber + " of suit " + c.CardType)));
             }
                
         }

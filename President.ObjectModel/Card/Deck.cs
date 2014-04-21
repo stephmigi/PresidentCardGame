@@ -19,7 +19,7 @@ namespace President.ObjectModel
         }
 
         /// <summary>
-        /// Resets the deck to its initial states
+        /// Resets the deck to its initial state
         /// </summary>
         public void Reset()
         {
