@@ -40,19 +40,15 @@ namespace President.ObjectModel
             int cardsPerPlayer = Deck.NUMBER_OF_CARDS / Players.Count;
             foreach (var player in Players)
             {
-                var cards = Deck.TakeCards(cardsPerPlayer);
-                var groupedPlayerCards = cards.GroupBy(p => p.CardNumber);
-                foreach (var group in groupedPlayerCards)
-                {
-                    var newGroup = new CardGroup(group.Key, group.ToList());
-                    player.PlayerCards.Add(newGroup);
-                }
+                Deck.TakeCards(cardsPerPlayer)
+                    .GroupBy(p => p.CardNumber)
+                    .ForEach(p => player.PlayerCards.Add(new CardGroup(p.Key, p.ToList())));
             }
             
         }
 
         /// <summary>
-        /// Select the first player of the game to play
+        /// Select randomly the first player to play
         /// </summary>
         public void SelectFirstPlayer()
         {
@@ -61,7 +57,7 @@ namespace President.ObjectModel
         }
 
         /// <summary>
-        /// Select the next player to play
+        /// Select the next player to play (in the Order)
         /// </summary>
         public void SelectNextPlayer()
         {
@@ -70,8 +66,7 @@ namespace President.ObjectModel
             var nextOrder = currentPlayerOrder == Order.Right ? Order.Top: ++currentPlayerOrder;
             var nextPlayer = Players.Where(p => p.Order == nextOrder).FirstOrDefault();
 
-            Players.ForEach(p => p.IsItMyTurn = false);
-            nextPlayer.IsItMyTurn = true;
+            Players.ForEach(p => p.IsItMyTurn = p == nextPlayer ? true : false);
         }
     }
 }
