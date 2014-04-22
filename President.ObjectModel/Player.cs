@@ -12,7 +12,16 @@ namespace President.ObjectModel
         public List<CardGroup> PlayerCards { get; set; }
         public Order Order { get; set; }
 
+        public bool IsPlayingCurrentTurn { get; set; }
         public bool IsItMyTurn { get; set; }
+
+        public int NumberOfCardsLeft
+        {
+            get
+            {
+                return PlayerCards.Sum(p => p.NumberOfCards);
+            }
+        }
 
         public Player(string name, Order order)
         {
@@ -26,7 +35,7 @@ namespace President.ObjectModel
         /// </summary>
         /// <param name="lastCardsPlayed">The last cards played</param>
         /// <returns>The list of playable cards</returns>
-        public List<CardGroup> ShowPlayableCards(CardGroup lastCardsPlayed)
+        public List<CardGroup> GetPlayableCards(CardGroup lastCardsPlayed)
         {
             var nbCards = lastCardsPlayed.NumberOfCards;
             var cardPlayed = lastCardsPlayed.CardNumber;
@@ -40,19 +49,37 @@ namespace President.ObjectModel
 
         /// <summary>
         /// Tells if a player can play
+        /// He should have playable cards and has to be playing current round
         /// </summary>
         /// <param name="lastCardsPlayed">The last cards played</param>
         /// <returns>True if the player can play, else false</returns>
         public bool CanPlay(CardGroup lastCardsPlayed)
         {
-            return ShowPlayableCards(lastCardsPlayed).Any();
+            return GetPlayableCards(lastCardsPlayed).Any() && IsPlayingCurrentTurn;
         }
 
-        public List<Card> Play(List<Card> lastCardsPlayed)
+        /// <summary>
+        /// Player plays the selected cards.
+        /// This consists of putting the selected cards on top of the stack
+        /// and removing them from the player's cards.
+        /// </summary>
+        /// <param name="playedCards">Cards the player plays</param>
+        /// <param name="stack">The stack of cards</param>
+        public void Play(CardGroup playedCards, List<CardGroup> stack)
         {
-            return null;
+            // put playedCards on top of stack
+            stack.Add(playedCards);
+
+            // get the group where the cards come from
+            var playerGroup = this.PlayerCards.Where(c => c.CardNumber == playedCards.CardNumber).FirstOrDefault();   
+
+            // remove the played cards from the player's group
+            playerGroup.Cards.RemoveAll(p => playedCards.Cards.Contains(p));
+
+            // delete the group from the player's card if there are no more cards in group
+            if (playedCards.NumberOfCards == 0)
+                PlayerCards.Remove(playerGroup);
+
         }
-
-
     }
 }

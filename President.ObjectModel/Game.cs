@@ -25,11 +25,18 @@ namespace President.ObjectModel
             }
         }
 
+        public CardGroup LastCardsOnStack
+        {
+            get
+            {
+                return Stack.Last();
+            }
+        }
+
         public Game(List<Player> players)
         {
             Players = players;
-            Deck = new Deck();
-            Stack = new List<CardGroup>();
+            this.NewRound();
         }
 
         /// <summary>
@@ -43,8 +50,7 @@ namespace President.ObjectModel
                 Deck.TakeCards(cardsPerPlayer)
                     .GroupBy(p => p.CardNumber)
                     .ForEach(p => player.PlayerCards.Add(new CardGroup(p.Key, p.ToList())));
-            }
-            
+            } 
         }
 
         /// <summary>
@@ -62,11 +68,36 @@ namespace President.ObjectModel
         public void SelectNextPlayer()
         {
             var currentPlayerOrder = CurrentPlayer.Order;
-
             var nextOrder = currentPlayerOrder == Order.Right ? Order.Top: ++currentPlayerOrder;
             var nextPlayer = Players.Where(p => p.Order == nextOrder).FirstOrDefault();
 
             Players.ForEach(p => p.IsItMyTurn = p == nextPlayer ? true : false);
+        }
+
+        /// <summary>
+        /// Tells if any player at the table can play on top of the stack
+        /// </summary>
+        /// <returns>True if another player can play, else false</returns>
+        public bool IsTurnOver()
+        {
+            return Players.Where(p => p.CanPlay(Stack.Last())).Any();
+        }
+
+        /// <summary>
+        /// Restart round
+        /// </summary>
+        public void NewRound()
+        {
+            Deck = new Deck();
+            Stack = new List<CardGroup>();
+        }
+
+        /// <summary>
+        /// New turn
+        /// </summary>
+        public void NewTurn()
+        {
+            Stack = new List<CardGroup>();
         }
     }
 }
