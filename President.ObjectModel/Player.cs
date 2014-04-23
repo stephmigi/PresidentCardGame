@@ -22,9 +22,20 @@ namespace President.ObjectModel
         public Order Order { get; set; }
 
         /// <summary>
-        /// Gets or sets value indicating whether it is my turn  to play
+        /// Gets or sets a value indicating whether it is my turn to play
         /// </summary>
         public bool IsItMyTurn { get; set; }
+
+        /// <summary>
+        /// Gets a value indicating whether I have finished playing the round
+        /// </summary>
+        public bool IsRoundFinishedForMe
+        {
+            get
+            {
+                return !this.PlayerCards.Any();
+            }
+        }
 
         /// <summary>
         /// Gets the number of cards left
@@ -53,7 +64,7 @@ namespace President.ObjectModel
         {
             if (lastCardsPlayed == null) return this.PlayerCards;
 
-            var nbCards = lastCardsPlayed.NumberOfCards;
+            var cardsCount = lastCardsPlayed.NumberOfCards;
             var cardPlayed = lastCardsPlayed.CardNumber;
 
             // deuce is the final card, can't play anything after that
@@ -61,7 +72,7 @@ namespace President.ObjectModel
                 return null;
 
             var playable =
-                this.PlayerCards.Where(c => c.NumberOfCards >= nbCards && c.CardNumber >= cardPlayed).ToList();
+                this.PlayerCards.Where(c => c.NumberOfCards >= cardsCount && c.CardNumber >= cardPlayed).ToList();
             return playable.Any() ? playable : null;
         }
 
@@ -73,7 +84,7 @@ namespace President.ObjectModel
         /// <returns>True if the player can play, else false</returns>
         public bool CanPlayThisTurn(CardGroup lastCardsPlayed)
         {
-            return this.GetPlayableCards(lastCardsPlayed) != null;
+            return this.GetPlayableCards(lastCardsPlayed) != null && !this.IsRoundFinishedForMe;
         }
 
         /// <summary>
@@ -95,7 +106,7 @@ namespace President.ObjectModel
             playerGroup.Cards.RemoveAll(p => selectedCards.Cards.Contains(p));
 
             // delete the group from the player's card if there are no more cards in group
-            if (selectedCards.NumberOfCards == 0)
+            if (playerGroup.NumberOfCards == 0)
                 PlayerCards.Remove(playerGroup);
 
         }

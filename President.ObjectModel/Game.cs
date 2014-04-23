@@ -6,6 +6,11 @@ namespace President.ObjectModel
 {
     public class Game
     {
+        #region properties
+
+        /// <summary>
+        /// List of players of the game
+        /// </summary>
         public List<Player> Players { get; set; }
 
         /// <summary>
@@ -25,7 +30,7 @@ namespace President.ObjectModel
         {
             get
             {
-                return this.Players.FirstOrDefault(p => p.IsItMyTurn);
+                return this.Players.SingleOrDefault(p => p.IsItMyTurn);
             }
         }
 
@@ -42,9 +47,24 @@ namespace President.ObjectModel
         }
 
         /// <summary>
+        /// Gets the number of players that haven't finished playing
+        /// </summary>
+        public int PlayersStillPlayingRound
+        {
+            get
+            {
+                return this.Players.Count(p => p.IsRoundFinishedForMe == false);
+            }
+        }
+
+        /// <summary>
         /// Gets or sets the score of the game
         /// </summary>
         public GameScore GameScore { get; set; }
+
+        #endregion
+
+        #region constructor
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Game"/> class. 
@@ -53,48 +73,36 @@ namespace President.ObjectModel
         public Game(List<Player> players)
         {
             Players = players;
-            this.NewRound();
+            this.Deck = new Deck();
+            this.Stack = new List<CardGroup>();
             GameScore = new GameScore();
         }
 
+        #endregion
+
+        #region public methods
+
         /// <summary>
-        /// Deal same number of cards to each player
+        /// Initialize a new round.
         /// </summary>
-        public void DealCards()
+        public void InitializeRound()
         {
-            int cardsPerPlayer = Deck.NUMBER_OF_CARDS / this.Players.Count;
-            foreach (var player in this.Players)
-            {
-                Deck.TakeCards(cardsPerPlayer)
-                    .GroupBy(p => p.CardNumber)
-                    .ForEach(p => player.PlayerCards.Add(new CardGroup(p.Key, p.ToList())));
-            } 
+            this.DealCards();
+            this.SelectFirstPlayerForRound();
         }
 
         /// <summary>
-        /// Select randomly the first player to play the first turn of the round
+        /// Initialize a new turn.
         /// </summary>
-        public void SelectFirstPlayerForRound()
+        public void InitializeTurn()
         {
-            var random = new Random().Next(0, this.Players.Count - 1);
-            this.Players[random].IsItMyTurn = true;
-
-            this.SetTurnStart();
-        }
-
-        /// <summary>
-        /// Set the first player of the turn
-        /// If it isn't the first turn, last player to have played previous round,
-        /// should start the next one.
-        /// </summary>
-        private void SetTurnStart()
-        {
-            this.Players.Where(p => p != this.CurrentPlayer).ForEach(p => p.IsItMyTurn = false);
+            this.Stack.Clear();
         }
 
         /// <summary>
         /// Select the next player to play (in the Order)
         /// Player will not be selected if he can't play
+        /// TODO : Refactor
         /// </summary>
         /// <param name="lastCardsPlayed">The last Cards Played.</param>
         /// <returns><see cref="bool"/>True if a next player has been found else false</returns>
@@ -112,30 +120,40 @@ namespace President.ObjectModel
 
             if (currentPlayerOrder == nextOrder)
             {
-                this.Players.ForEach(p => p.IsItMyTurn = false);
                 return false;
             }
-                
+
             this.Players.ForEach(p => p.IsItMyTurn = p == nextPlayer);
             return true;
         }
 
+        #endregion
+
+        #region private methods
+
         /// <summary>
-        /// Restart round
+        /// Deal same number of cards to each player
         /// </summary>
-        public void NewRound()
+        private void DealCards()
         {
-            this.Deck = new Deck();
-            this.Stack = new List<CardGroup>();
+            int cardsPerPlayer = Deck.NUMBER_OF_CARDS / this.Players.Count;
+            foreach (var player in this.Players)
+            {
+                Deck.TakeCards(cardsPerPlayer)
+                    .GroupBy(p => p.CardNumber)
+                    .ForEach(p => player.PlayerCards.Add(new CardGroup(p.Key, p.ToList())));
+            } 
         }
 
         /// <summary>
-        /// New turn
+        /// Select randomly the first player to play the first turn of the round
         /// </summary>
-        private void NewTurn()
+        private void SelectFirstPlayerForRound()
         {
-            this.Stack = new List<CardGroup>();
-            this.SetTurnStart();
+            var random = new Random().Next(0, this.Players.Count - 1);
+            this.Players[random].IsItMyTurn = true;
         }
+
+        #endregion
     }
 }
