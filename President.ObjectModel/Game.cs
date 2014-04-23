@@ -9,6 +9,11 @@ namespace President.ObjectModel
         #region properties
 
         /// <summary>
+        /// The number of rounds to play
+        /// </summary>
+        public readonly int RoundsToPlay; 
+
+        /// <summary>
         /// List of players of the game
         /// </summary>
         public List<Player> Players { get; set; }
@@ -70,12 +75,14 @@ namespace President.ObjectModel
         /// Initializes a new instance of the <see cref="Game"/> class. 
         /// </summary>
         /// <param name="players"> A list of players</param>
-        public Game(List<Player> players)
+        /// /// <param name="roundsToPlay"> Number of rounds to play</param>
+        public Game(List<Player> players, int roundsToPlay)
         {
-            Players = players;
+            this.Players = players;
             this.Deck = new Deck();
             this.Stack = new List<CardGroup>();
             GameScore = new GameScore();
+            this.RoundsToPlay = roundsToPlay;
         }
 
         #endregion
@@ -87,6 +94,7 @@ namespace President.ObjectModel
         /// </summary>
         public void InitializeRound()
         {
+            this.Deck.FillDeck();
             this.DealCards();
             this.SelectFirstPlayerForRound();
         }
@@ -151,7 +159,7 @@ namespace President.ObjectModel
         private void SelectFirstPlayerForRound()
         {
             var random = new Random().Next(0, this.Players.Count - 1);
-            this.Players[random].IsItMyTurn = true;
+            this.Players.ForEach(p => p.IsItMyTurn = p == this.Players[random]);
         }
 
         #endregion

@@ -33,7 +33,7 @@ namespace President.ObjectModel
         {
             get
             {
-                return !this.PlayerCards.Any();
+                return this.NumberOfCardsLeft == 0;
             }
         }
 

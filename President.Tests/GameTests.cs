@@ -21,49 +21,61 @@ namespace President.Tests
                                 new Player("Joueur 4", Order.Right) 
                             };
 
+            int roundsToPlay = 10;
+
             // Start new game with players
-            var game = new Game(playerList);
+            var game = new Game(playerList, roundsToPlay);
 
-            // Init game
-            game.InitializeRound();
-
-            Console.WriteLine("First player to start: " + game.CurrentPlayer.Name);
-
-            int turnCount = 1;
-
-            while (game.Players.Count(p => p.NumberOfCardsLeft > 0) >= 2)
+            int roundsPlayed = 1;
+            for (int i = 0; i < roundsToPlay; i++)
             {
-                game.InitializeTurn();
+                game.InitializeRound();
+                int turnCount = 1;
                 Console.WriteLine("-------------------");
-                Console.WriteLine("Turn #" + turnCount);
+                Console.WriteLine("Round #" + roundsPlayed);
                 Console.WriteLine("-------------------");
-                do
+                
+                while (game.Players.Count(p => p.NumberOfCardsLeft > 0) >= 2)
                 {
-                    //TODO : Hack to fix a bug when a player finishes and Select player still chooses him as Current..?? Fix it one day...
-                    if (game.CurrentPlayer.IsRoundFinishedForMe) continue;
 
-                    var playable = game.CurrentPlayer.GetPlayableCards(game.LastCardsOnStack);
-
-                    // user will select cards in the UI, for now just take stupidly the first possiblity
-                    var choice = playable.First();
-
-                    // if nothing is on stack, play the max number of cards possible
-                    int cardsToTake = game.Stack.Any() ? game.LastCardsOnStack.NumberOfCards : choice.NumberOfCards;
-
-                    CardGroup selectedCards = new CardGroup(choice.CardNumber, choice.Cards.Take(cardsToTake).ToList());
-
-                    game.CurrentPlayer.Play(selectedCards, game.Stack);
-
-                    Console.WriteLine(game.CurrentPlayer.Name + "(Left : " + game.CurrentPlayer.NumberOfCardsLeft + ")");
-                    selectedCards.Cards.ForEach(c => Console.WriteLine(c.CardNumber.ToString() + " of suit " + c.CardType));
-
-                    if (game.CurrentPlayer.IsRoundFinishedForMe)
+                    game.InitializeTurn();
+                    Console.WriteLine("-------------------");
+                    Console.WriteLine("Turn #" + turnCount);
+                    Console.WriteLine("-------------------");
+                    do
                     {
-                        Console.WriteLine(game.CurrentPlayer.Name + "has no more cards !!********");
+                        //TODO : Hack to fix a bug when a player finishes and Select player still chooses him as Current..?? Fix it one day...
+                        if (game.CurrentPlayer.IsRoundFinishedForMe) continue;
+
+                        var playable = game.CurrentPlayer.GetPlayableCards(game.LastCardsOnStack);
+
+                        // user will select cards in the UI, for now just take stupidly the first possiblity
+                        var choice = playable.First();
+
+                        // if nothing is on stack, play the max number of cards possible
+                        int cardsToTake = game.Stack.Any() ? game.LastCardsOnStack.NumberOfCards : choice.NumberOfCards;
+
+                        CardGroup selectedCards = new CardGroup(
+                            choice.CardNumber,
+                            choice.Cards.Take(cardsToTake).ToList());
+
+                        game.CurrentPlayer.Play(selectedCards, game.Stack);
+
+                        Console.WriteLine(
+                            game.CurrentPlayer.Name + "(Left : " + game.CurrentPlayer.NumberOfCardsLeft + ")");
+                        selectedCards.Cards.ForEach(
+                            c => Console.WriteLine(c.CardNumber.ToString() + " of suit " + c.CardType));
+
+                        if (game.CurrentPlayer.IsRoundFinishedForMe)
+                        {
+                            Console.WriteLine(game.CurrentPlayer.Name + "has no more cards !!********");
+                        }
                     }
+                    while (game.SelectNextPlayer(game.LastCardsOnStack) && game.PlayersStillPlayingRound > 1);
+                    turnCount++;
                 }
-                while (game.SelectNextPlayer(game.LastCardsOnStack) && game.PlayersStillPlayingRound > 1);
-                turnCount++;
+
+                roundsPlayed++;
             }
         }
     }

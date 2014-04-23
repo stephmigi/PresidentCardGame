@@ -15,16 +15,22 @@ namespace President.ObjectModel
 
         public Deck()
         {
-            this.Reset();
-            this.Shuffle();
+            //this.Reset();
+            //this.Shuffle();
+        }
+
+        public void FillDeck()
+        {
+            Reset();
+            Shuffle();
         }
 
         /// <summary>
         /// Resets the deck to its initial state
         /// </summary>
-        public void Reset()
+        private void Reset()
         {
-            Cards = Enumerable.Range(1, 4)
+            this.Cards = Enumerable.Range(1, 4)
                 .SelectMany(s => Enumerable.Range(1, 13)
                     .Select(c => new Card((CardNumber)c, (CardType)s))).ToList();
         }
@@ -32,9 +38,9 @@ namespace President.ObjectModel
         /// <summary>
         /// Shuffles the deck randomly
         /// </summary>
-        public void Shuffle()
+        private void Shuffle()
         {
-            Cards = Cards.OrderBy(c => Guid.NewGuid()).ToList();
+            this.Cards = this.Cards.OrderBy(c => Guid.NewGuid()).ToList();
         }
 
         /// <summary>
@@ -44,11 +50,11 @@ namespace President.ObjectModel
         /// <returns>A list of cards</returns>
         public List<Card> TakeCards(int nbCardsToTake)
         {
-            var cardsToTake = Cards.Take(nbCardsToTake)
+            var cardsToTake = this.Cards.Take(nbCardsToTake)
                 .OrderBy(p => p.CardNumber)
                 .ThenBy(p => p.CardType).ToList();
-            
-            Cards.RemoveRange(0, nbCardsToTake);
+
+            this.Cards.RemoveRange(0, nbCardsToTake);
 
             return cardsToTake;
         }
