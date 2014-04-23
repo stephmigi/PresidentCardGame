@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace President.ObjectModel
+﻿namespace President.ObjectModel
 {
+    /// <summary>
+    /// Defines the seats, which defines the order of players in the game
+    /// </summary>
     public enum Order
     {
         Top = 1,
@@ -13,4 +10,6 @@ namespace President.ObjectModel
         Bottom = 3, 
         Right = 4
     }
+
+
 }

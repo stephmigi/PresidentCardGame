@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace President.ObjectModel
 {
@@ -11,32 +9,52 @@ namespace President.ObjectModel
         public List<Player> Players { get; set; }
 
         /// <summary>
-        /// The initial deck
+        /// Gets or sets the initial deck
         /// </summary>
         public Deck Deck { get; set; }
 
+        /// <summary>
+        /// Gets or sets the stack of cards on which players play
+        /// </summary>
         public List<CardGroup> Stack { get; set; }
 
+        /// <summary>
+        /// Gets the current player
+        /// </summary>
         public Player CurrentPlayer
         {
             get
             {
-                return Players.Where(p => p.IsItMyTurn == true).FirstOrDefault();
+                return this.Players.FirstOrDefault(p => p.IsItMyTurn);
             }
         }
 
+        /// <summary>
+        /// Gets the last cards played
+        /// </summary>
         public CardGroup LastCardsOnStack
         {
             get
             {
-                return Stack.Last();
+                if (!Stack.Any()) return null;
+                return this.Stack.Last();
             }
         }
 
+        /// <summary>
+        /// Gets or sets the score of the game
+        /// </summary>
+        public GameScore GameScore { get; set; }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Game"/> class. 
+        /// </summary>
+        /// <param name="players"> A list of players</param>
         public Game(List<Player> players)
         {
             Players = players;
             this.NewRound();
+            GameScore = new GameScore();
         }
 
         /// <summary>
@@ -44,8 +62,8 @@ namespace President.ObjectModel
         /// </summary>
         public void DealCards()
         {
-            int cardsPerPlayer = Deck.NUMBER_OF_CARDS / Players.Count;
-            foreach (var player in Players)
+            int cardsPerPlayer = Deck.NUMBER_OF_CARDS / this.Players.Count;
+            foreach (var player in this.Players)
             {
                 Deck.TakeCards(cardsPerPlayer)
                     .GroupBy(p => p.CardNumber)
@@ -54,33 +72,52 @@ namespace President.ObjectModel
         }
 
         /// <summary>
-        /// Select randomly the first player to play
+        /// Select randomly the first player to play the first turn of the round
         /// </summary>
-        public void SelectFirstPlayer()
+        public void SelectFirstPlayerForRound()
         {
-            var first = new Random().Next(0, Players.Count - 1) ;
-            Players[first].IsItMyTurn = true;
+            var random = new Random().Next(0, this.Players.Count - 1);
+            this.Players[random].IsItMyTurn = true;
+
+            this.SetTurnStart();
+        }
+
+        /// <summary>
+        /// Set the first player of the turn
+        /// If it isn't the first turn, last player to have played previous round,
+        /// should start the next one.
+        /// </summary>
+        private void SetTurnStart()
+        {
+            this.Players.Where(p => p != this.CurrentPlayer).ForEach(p => p.IsItMyTurn = false);
         }
 
         /// <summary>
         /// Select the next player to play (in the Order)
+        /// Player will not be selected if he can't play
         /// </summary>
-        public void SelectNextPlayer()
+        /// <param name="lastCardsPlayed">The last Cards Played.</param>
+        /// <returns><see cref="bool"/>True if a next player has been found else false</returns>
+        public bool SelectNextPlayer(CardGroup lastCardsPlayed)
         {
-            var currentPlayerOrder = CurrentPlayer.Order;
-            var nextOrder = currentPlayerOrder == Order.Right ? Order.Top: ++currentPlayerOrder;
-            var nextPlayer = Players.Where(p => p.Order == nextOrder).FirstOrDefault();
+            var currentPlayerOrder = this.CurrentPlayer.Order;
+            var nextOrder = currentPlayerOrder.GetNextOrder();
+            var nextPlayer = this.Players.FirstOrDefault(p => p.Order == nextOrder);
 
-            Players.ForEach(p => p.IsItMyTurn = p == nextPlayer ? true : false);
-        }
+            while ((!nextPlayer.CanPlayThisTurn(lastCardsPlayed)) && currentPlayerOrder != nextOrder)
+            {
+                nextOrder = nextOrder.GetNextOrder();
+                nextPlayer = this.Players.FirstOrDefault(p => p.Order == nextOrder);
+            }
 
-        /// <summary>
-        /// Tells if any player at the table can play on top of the stack
-        /// </summary>
-        /// <returns>True if another player can play, else false</returns>
-        public bool IsTurnOver()
-        {
-            return Players.Where(p => p.CanPlay(Stack.Last())).Any();
+            if (currentPlayerOrder == nextOrder)
+            {
+                this.Players.ForEach(p => p.IsItMyTurn = false);
+                return false;
+            }
+                
+            this.Players.ForEach(p => p.IsItMyTurn = p == nextPlayer);
+            return true;
         }
 
         /// <summary>
@@ -88,16 +125,17 @@ namespace President.ObjectModel
         /// </summary>
         public void NewRound()
         {
-            Deck = new Deck();
-            Stack = new List<CardGroup>();
+            this.Deck = new Deck();
+            this.Stack = new List<CardGroup>();
         }
 
         /// <summary>
         /// New turn
         /// </summary>
-        public void NewTurn()
+        private void NewTurn()
         {
-            Stack = new List<CardGroup>();
+            this.Stack = new List<CardGroup>();
+            this.SetTurnStart();
         }
     }
 }
