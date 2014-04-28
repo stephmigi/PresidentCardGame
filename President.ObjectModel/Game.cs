@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace President.ObjectModel
+﻿namespace President.ObjectModel
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+
     public class Game
     {
         #region properties
@@ -46,19 +46,23 @@ namespace President.ObjectModel
         {
             get
             {
-                if (!Stack.Any()) return null;
+                if (!this.Stack.Any())
+                {
+                    return null;
+                }
+
                 return this.Stack.Last();
             }
         }
 
         /// <summary>
-        /// Gets the number of players that haven't finished playing
+        /// Gets a value indicating whether round is finished
         /// </summary>
-        public int PlayersStillPlayingRound
+        public bool IsRoundFinished
         {
             get
             {
-                return this.Players.Count(p => p.IsRoundFinishedForMe == false);
+                return !(this.Players.Count(p => p.IsRoundFinishedForMe == false) > 1);
             }
         }
 
@@ -131,6 +135,92 @@ namespace President.ObjectModel
 
             this.Players.ForEach(p => p.IsItMyTurn = p == nextPlayer);
             return true;
+        }
+
+        /// <summary>
+        /// Play a game during a given number of rounds.
+        /// </summary>
+        /// <param name="roundsToPlay">Number of rounds to play</param>
+        public void PlayGame(int roundsToPlay)
+        {
+            int roundsPlayed = 1;
+            for (int i = 0; i < roundsToPlay; i++)
+            {
+                Console.WriteLine("-------------------");
+                Console.WriteLine("Round #" + roundsPlayed);
+                Console.WriteLine("-------------------");
+                this.PlayRound();
+                roundsPlayed++;
+            }
+        }
+
+        /// <summary>
+        /// Play one round
+        /// </summary>
+        private void PlayRound()
+        {
+            this.InitializeRound();
+            int turnCount = 1;
+
+            while (this.Players.Count(p => p.NumberOfCardsLeft > 0) >= 2)
+            {
+                Console.WriteLine("-------------------");
+                Console.WriteLine("Turn #" + turnCount);
+                Console.WriteLine("-------------------");
+                this.PlayTurn();
+                turnCount++;
+            }
+        }
+
+        /// <summary>
+        /// Play a turn
+        /// </summary>
+        private void PlayTurn()
+        {
+            this.InitializeTurn();
+            do
+            {
+                // TODO : Hack to fix a bug when a player finishes and Select player still chooses him as Current..?? Fix it one day...
+                if (this.CurrentPlayer.IsRoundFinishedForMe)
+                {
+                    continue;
+                }
+
+                CardGroup choice = null;
+                int cardsToTake = 0;
+                // Bots select cards stupidly
+                if (this.CurrentPlayer.TypeOfPlayer == PlayerType.Bot)
+                {
+                    var playable = this.CurrentPlayer.GetPlayableCards(this.LastCardsOnStack);
+                    choice = playable.First();
+
+                    // if nothing is on stack, play the max number of cards possible
+                    cardsToTake = this.Stack.Any() ? this.LastCardsOnStack.NumberOfCards : choice.NumberOfCards;
+                }
+                else
+                {
+                    // Here goes the logic for user selecting cards in the UI
+                    throw new NotImplementedException();
+                }
+
+                CardGroup selectedCards = new CardGroup(
+                    choice.CardNumber,
+                    choice.Cards.Take(cardsToTake).ToList());
+
+                this.CurrentPlayer.Play(selectedCards, this.Stack);
+
+                Console.WriteLine(
+                    this.CurrentPlayer.Name + "(Left : " + this.CurrentPlayer.NumberOfCardsLeft + ")");
+                selectedCards.Cards.ForEach(
+                    c => Console.WriteLine(c.CardNumber.ToString() + " of suit " + c.CardType));
+
+                if (this.CurrentPlayer.IsRoundFinishedForMe)
+                {
+                    // do stuff when round is finished for player
+                    Console.WriteLine(this.CurrentPlayer.Name + "has no more cards !!********");
+                }
+            }
+            while (this.SelectNextPlayer(this.LastCardsOnStack) && !this.IsRoundFinished);
         }
 
         #endregion

@@ -22,6 +22,11 @@ namespace President.ObjectModel
         public Order Order { get; set; }
 
         /// <summary>
+        /// Gets or sets the type of player
+        /// </summary>
+        public PlayerType TypeOfPlayer { get; set; }
+
+        /// <summary>
         /// Gets or sets a value indicating whether it is my turn to play
         /// </summary>
         public bool IsItMyTurn { get; set; }
@@ -48,9 +53,10 @@ namespace President.ObjectModel
             }
         }
 
-        public Player(string name, Order order)
+        public Player(string name, PlayerType type, Order order)
         {
             this.Name = name == string.Empty ? "Joueur" : name;
+            this.TypeOfPlayer = type;
             this.Order = order;
             this.PlayerCards = new List<CardGroup>();
         }
