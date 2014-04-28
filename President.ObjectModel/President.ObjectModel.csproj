@@ -39,6 +39,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Bot.cs" />
     <Compile Include="Card\Card.cs" />
     <Compile Include="Card\CardGroup.cs" />
     <Compile Include="Card\CardNumber.cs" />
@@ -49,7 +50,6 @@
     <Compile Include="LinqExtensions.cs" />
     <Compile Include="Order.cs" />
     <Compile Include="Player.cs" />
-    <Compile Include="PlayerType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Score.cs" />
   </ItemGroup>

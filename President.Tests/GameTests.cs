@@ -15,10 +15,10 @@ namespace President.Tests
             // new players
             var playerList = new List<Player>
                             {
-                                new Player("Joueur 1", PlayerType.Bot, Order.Top),
-                                new Player("Joueur 2", PlayerType.Bot, Order.Left),
-                                new Player("Joueur 3", PlayerType.Bot, Order.Bottom), 
-                                new Player("Joueur 4", PlayerType.Bot, Order.Right) 
+                                new Bot("Joueur 1", Order.Top),
+                                new Bot("Joueur 2", Order.Left),
+                                new Bot("Joueur 3", Order.Bottom), 
+                                new Bot("Joueur 4", Order.Right) 
                             };
 
             int roundsToPlay = 10;

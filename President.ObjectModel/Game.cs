@@ -174,6 +174,7 @@
 
         /// <summary>
         /// Play a turn
+        /// Turn ends when either round is over or there is no next player (no one can play...)
         /// </summary>
         private void PlayTurn()
         {
@@ -186,31 +187,24 @@
                     continue;
                 }
 
-                CardGroup choice = null;
-                int cardsToTake = 0;
-                // Bots select cards stupidly
-                if (this.CurrentPlayer.TypeOfPlayer == PlayerType.Bot)
-                {
-                    var playable = this.CurrentPlayer.GetPlayableCards(this.LastCardsOnStack);
-                    choice = playable.First();
+                CardGroup selectedCards;
 
-                    // if nothing is on stack, play the max number of cards possible
-                    cardsToTake = this.Stack.Any() ? this.LastCardsOnStack.NumberOfCards : choice.NumberOfCards;
+                // Card selection :
+                // Bots select cards stupidly, first cards they can play is fine
+                if (this.CurrentPlayer.AsBot != null)
+                {
+                    selectedCards = this.CurrentPlayer.AsBot.SelectCardsToPlay(this.LastCardsOnStack);
                 }
                 else
                 {
                     // Here goes the logic for user selecting cards in the UI
+                    // Will be implemented same time as UI
                     throw new NotImplementedException();
                 }
 
-                CardGroup selectedCards = new CardGroup(
-                    choice.CardNumber,
-                    choice.Cards.Take(cardsToTake).ToList());
-
                 this.CurrentPlayer.Play(selectedCards, this.Stack);
 
-                Console.WriteLine(
-                    this.CurrentPlayer.Name + "(Left : " + this.CurrentPlayer.NumberOfCardsLeft + ")");
+                Console.WriteLine(this.CurrentPlayer.Name + "(Left : " + this.CurrentPlayer.NumberOfCardsLeft + ")");
                 selectedCards.Cards.ForEach(
                     c => Console.WriteLine(c.CardNumber.ToString() + " of suit " + c.CardType));
 
