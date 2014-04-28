@@ -110,23 +110,21 @@ namespace President.ObjectModel
         /// <summary>
         /// Select the next player to play (in the Order)
         /// Player will not be selected if he can't play
-        /// TODO : Refactor
         /// </summary>
         /// <param name="lastCardsPlayed">The last Cards Played.</param>
         /// <returns><see cref="bool"/>True if a next player has been found else false</returns>
         public bool SelectNextPlayer(CardGroup lastCardsPlayed)
         {
-            var currentPlayerOrder = this.CurrentPlayer.Order;
-            var nextOrder = currentPlayerOrder.GetNextOrder();
-            var nextPlayer = this.Players.FirstOrDefault(p => p.Order == nextOrder);
-
-            while ((!nextPlayer.CanPlayThisTurn(lastCardsPlayed)) && currentPlayerOrder != nextOrder)
+            var nextOrder = this.CurrentPlayer.Order;
+            Player nextPlayer;
+            do
             {
                 nextOrder = nextOrder.GetNextOrder();
                 nextPlayer = this.Players.FirstOrDefault(p => p.Order == nextOrder);
             }
+            while ((!nextPlayer.CanPlayThisTurn(lastCardsPlayed)) && this.CurrentPlayer.Order != nextOrder);
 
-            if (currentPlayerOrder == nextOrder)
+            if (this.CurrentPlayer.Order == nextOrder)
             {
                 return false;
             }

@@ -37,7 +37,6 @@ namespace President.Tests
                 
                 while (game.Players.Count(p => p.NumberOfCardsLeft > 0) >= 2)
                 {
-
                     game.InitializeTurn();
                     Console.WriteLine("-------------------");
                     Console.WriteLine("Turn #" + turnCount);

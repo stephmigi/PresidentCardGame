@@ -107,8 +107,9 @@ namespace President.ObjectModel
 
             // delete the group from the player's card if there are no more cards in group
             if (playerGroup.NumberOfCards == 0)
-                PlayerCards.Remove(playerGroup);
-
+            {
+                this.PlayerCards.Remove(playerGroup);
+            }
         }
     }
 }
