@@ -50,7 +50,8 @@ namespace President.ObjectModel
 
         /// <summary>
         /// Accesses the player as a bot.
-        /// Getter is overrided in Bot class.
+        /// This is overrided in Bot class so
+        /// if player is not a bot, it will return null.
         /// </summary>
         public virtual Bot AsBot 
         {
@@ -64,7 +65,6 @@ namespace President.ObjectModel
         /// Initializes a new instance of the <see cref="Player"/> class.
         /// </summary>
         /// <param name="name">The name.</param>
-        /// <param name="type">The type.</param>
         /// <param name="order">The order.</param>
         public Player(string name, Order order)
         {
@@ -90,7 +90,9 @@ namespace President.ObjectModel
 
             // deuce is the final card, can't play anything after that
             if (cardPlayed == CardNumber.Two)
+            {
                 return null;
+            }
 
             var playable =
                 this.PlayerCards.Where(c => c.NumberOfCards >= cardsCount && c.CardNumber >= cardPlayed).ToList();

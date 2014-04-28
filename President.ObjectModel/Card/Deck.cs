@@ -13,16 +13,13 @@ namespace President.ObjectModel
         /// </summary>
         public const int NUMBER_OF_CARDS = 52;
 
-        public Deck()
-        {
-            //this.Reset();
-            //this.Shuffle();
-        }
-
+        /// <summary>
+        /// Fills the deck with shuffled cards
+        /// </summary>
         public void FillDeck()
         {
-            Reset();
-            Shuffle();
+            this.Reset();
+            this.Shuffle();
         }
 
         /// <summary>

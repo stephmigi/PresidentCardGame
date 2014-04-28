@@ -10,9 +10,17 @@ namespace President.Tests
     public class GameTests
     {
         [Test]
-        public void TestingTheDeck()
+        public void Deck_HasOnlyDifferentCards()
         {
-            // new players
+            var Deck = new Deck();
+            Deck.FillDeck();
+            Assert.That(Deck.Cards.Distinct().Count() == Deck.Cards.Count());
+        }
+
+        [Test]
+        public void TestingGame()
+        {
+            // new bots
             var playerList = new List<Player>
                             {
                                 new Bot("Joueur 1", Order.Top),
@@ -21,12 +29,10 @@ namespace President.Tests
                                 new Bot("Joueur 4", Order.Right) 
                             };
 
-            int roundsToPlay = 10;
+            // Start new game of 10 rounds with four players
+            var game = new Game(playerList, 10);
 
-            // Start new game with players
-            var game = new Game(playerList, roundsToPlay);
-
-            game.PlayGame(10);
+            game.PlayGame();
         }
     }
 }

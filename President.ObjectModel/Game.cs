@@ -46,12 +46,7 @@
         {
             get
             {
-                if (!this.Stack.Any())
-                {
-                    return null;
-                }
-
-                return this.Stack.Last();
+                return !this.Stack.Any() ? null : this.Stack.Last();
             }
         }
 
@@ -141,10 +136,10 @@
         /// Play a game during a given number of rounds.
         /// </summary>
         /// <param name="roundsToPlay">Number of rounds to play</param>
-        public void PlayGame(int roundsToPlay)
+        public void PlayGame()
         {
             int roundsPlayed = 1;
-            for (int i = 0; i < roundsToPlay; i++)
+            for (int i = 0; i < this.RoundsToPlay; i++)
             {
                 Console.WriteLine("-------------------");
                 Console.WriteLine("Round #" + roundsPlayed);
@@ -194,6 +189,12 @@
                 if (this.CurrentPlayer.AsBot != null)
                 {
                     selectedCards = this.CurrentPlayer.AsBot.SelectCardsToPlay(this.LastCardsOnStack);
+
+                    // This should never happen.
+                    if (this.Stack.SelectMany(c => c.Cards).ToList().Intersect(selectedCards.Cards).Any())
+                    {
+                        throw new InvalidOperationException("Cant play cards that are on the stack.");
+                    }
                 }
                 else
                 {
