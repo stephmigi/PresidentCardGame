@@ -24,5 +24,12 @@ namespace JeuDuPresident
         {
             InitializeComponent();
         }
+
+        private void OnCardSelected(object sender, MouseButtonEventArgs e)
+        {
+            // get the card on which i have clicked
+            var selectedCard = ((Image)e.OriginalSource).Name;
+            MessageBox.Show("Hello from card" + selectedCard);
+        }
     }
 }
