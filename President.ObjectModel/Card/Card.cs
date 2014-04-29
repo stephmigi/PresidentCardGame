@@ -10,5 +10,10 @@
             CardNumber = cardNumber;
             CardType = type;
         }
+
+        public override string ToString()
+        {
+            return ((int)this.CardType).ToString() + "-" + ((int)CardNumber).ToString();
+        }
     }
 }
