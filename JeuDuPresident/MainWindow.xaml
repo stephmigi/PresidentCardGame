@@ -5,8 +5,8 @@
     <DockPanel LastChildFill="True">
         <Grid Background="Yellow">
             <WrapPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Top" Height="110" Width="842" Background="Green" >
-                <Image Source="assets\img\cards\1.png" Name ="One" MouseDown="OnCardSelected"></Image>
-                <Image Source="assets\img\cards\1.png" Name ="Two" MouseDown="OnCardSelected"></Image>
+                <Image Source="assets\img\cards\1.png"></Image>
+                <Image Source="assets\img\cards\1.png"></Image>
                 <Image Source="assets\img\cards\1.png"></Image>
                 <Image Source="assets\img\cards\1.png"></Image>
                 <Image Source="assets\img\cards\1.png"></Image>
